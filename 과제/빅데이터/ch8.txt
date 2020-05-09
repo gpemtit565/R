@@ -1,0 +1,169 @@
+#데이터 구조 변경
+#1인당 전기 생산량 데이터 가져와 정리하기
+
+elec_gen <-
+  read.csv("d:/SY/R/ds/ch5/data/electricity_generation_per_person.csv",
+           header=TRUE)
+names(elec_gen)
+ncol(elec_gen)
+
+names(elec_gen)[2:33] <-
+  substr(names(elec_gen)[2:33], 2, nchar(names(elec_gen)[2:33]))
+names(elec_gen)
+
+install.packages("tidyr")
+library(tidyr)
+w_iris <- iris
+
+head(w_iris)
+l_iris <- gather(w_iris, Type, value, Sepal.Length:Petal.Width)
+head(l_iris)
+
+gather(w_iris, Type, Sepal.Length:Petal.Width)
+
+#elec_gen 세로형 데이터로 변형하기
+
+elec_gen_df <-
+  gather(elec_gen, -country, key="year", value="ElectricityGeneration")
+
+elec_gen_df <-
+  gather(elec_gen, year, ElectricityGeneration, -country)
+
+df_x <- data.frame(name = c("a","b","c"),
+                   math = c(88, 80, 45))
+df_y <- data.frame(name = c("a", "b", "d"),
+                   korean = c(70, 88, 75))
+df_x
+df_y
+
+z <- merge(df_x, df_y, by = c("name"))
+z
+
+merge(df_x, df_y, all.x = T)
+
+merge(df_x, df_y, all.y = T)
+
+merge(df_x, df_y, all = T)
+
+elec_gen_use <- merge(elec_gen_df, elec_use,df)
+View(elec_gen_use)
+
+#"NHIS2017" 파일 가져오기
+
+NHIS2017 <-
+  read.csv("d:/SY/R/ds/ch6/data/NHIS_OPEN_GJ_2017.csv",
+           fileEncoding ="EUC-KR")
+
+str(NHIS2017)
+View(NHIS2017)
+
+
+#---------------------------------------------------------
+
+#2-2
+#NHIS2017_2 생성
+
+
+NHIS2017_2 <- NHIS2017[1:26]
+
+#2-3
+#결측값 제거
+NHIS2017_2 <- na.omit(NHIS2017)
+View(NHIS2017_2)
+
+#2-4
+#데이터 팩터 변환
+
+NHIS2017_2$성별코드 <- as.factor(NHIS2017_2$성별코드)
+NHIS2017_2$연령대코드.5세단위. <-
+  as.factor(NHIS2017_2$연령대코드.5세단위.)
+NHIS2017_2$시도코드 <- as.factor(NHIS2017_2$시도코드)
+str(NHIS2017_2)
+
+#----------------------------------------------------------
+
+#3
+#성별, 시도, 연령대 순으로 요약된 통계값 구하기
+
+NHIS2017M <- NHIS2017_2 %>%
+  group_by(기준년도, 성별코드, 시도코드, 연령대코드.5세단위.) %>%
+  summarise(신장평균=mean(신장.5cm단위.), 체중평균=mean(체중.5kg단위.),
+                허리둘레평균=mean(허리둘레))
+
+apply(anscombe, 2, mean)
+
+apply(anscombe, 2, var)
+
+cor(anscombe$x1, anscombe$y1)
+
+cor(anscombe$x2, anscombe$y2)
+
+cor(anscombe$x3, anscombe$y3)
+
+cor(anscombe$x4, anscombe$y4)
+
+#anscombe를 구성하는 네개의 데이터셋을 사용한 그래프
+#anscombe 데이터 셋 시각화
+
+lm(y1~x1, data = data1)
+lm(y2~x2, data = data2)
+lm(y3~x3, data = data3)
+lm(y4~x4, data = data4)
+
+par(mfrow=c(2,2))
+plot(data1, xlim=c(3,20), ylim=c(3,13))
+abline(a=3.0001, b=0.5001)
+
+plot(data2, xlim=c(3,20), ylim=c(3,13))
+abline(a=3.001, b=0.500)
+
+plot(data3, xlim=c(3,20), ylim=c(3,13))
+abline(a=3.0025, b=0.4997)
+
+plot(data4, xlim=c(3,20), ylim=c(3,13))
+abline(a=3.0017, b=0.4999)
+
+par(mfrow=c(1,1))
+
+View(anscombe)
+
+#시각화의 기본요소, gapminder 사용
+gapminder <- gapminder::gapminder
+str(gapminder)
+
+#pop변수 double 타입으로 변경
+gapminder$pop <- as.double(gapminder$pop)
+
+y <- gapminder %>% group_by(year, continent) %>%
+  summarise(c_pop = sum(pop))
+
+head(y,20)
+View(y)
+View(gapminder)
+
+
+#그래프, 기본, 대륙별 색상, 대륙별 표식, 대륙별 범례
+plot(y$year, y$c_pop)
+
+#대륙별 색상
+plot(y$year, y$c_pop, col = y$continent)
+
+#대륙별 표식
+plot(y$year, y$c_pop, col = y$continent, pch=c(1:5))
+plot(y$year, y$c_pop, col = y$continent,
+     pch=c(1:length(levels(y$continent))))
+plot(y$year, y$c_pop, col = y$continent,
+     pch=c(1:nlevels(y$continent)))
+
+
+levels(y$continent)
+nlevels(y$continent)
+
+#대륙별 범례
+
+legend("topleft", legend = levels(y$continent),
+       pch = c(1:5), col=c(1:5))
+
+legend("topleft", legend = levels(y$continent),
+       pch = c(1:length(levels(y$continent))),
+       col=c(1:length(levels(y$continent))))

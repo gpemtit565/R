@@ -1,0 +1,130 @@
+#airquality데이터에서 결측값 처리 후 평균 구하기
+str(airquality)
+table(is.na(airquality))
+
+#ozone 속성에서 na가 없는 값만 추출함
+air_narm <- airquality[!is.na(airquality$Ozone), ]
+head(air_narm)
+mean(air_narm$Ozone)
+
+#na.omit 함수
+air_narm1 <- na.omit(airquality)
+mean(air_narm1$Ozone)
+
+#na.rm 함수
+mean(airquality$Ozone, na.rm=T)
+
+table(is.na(airquality))
+
+table(is.na(airquality$Ozone))
+
+table(is.na(airquality$Solar.R))
+
+air_narm2 <-
+  airquality[!is.na(airquality$Ozone)&
+               !is.na(airquality$Solar.R),]
+mean(air_narm2$Ozone)
+
+#na.rm함수
+mean(airquality$Ozone, na.rm=T)
+
+#반복문 사용해서 결측값 확인
+head(airquality)
+air2 <- airquality
+
+#for문 이용
+for(i in 1:ncol(air2)){
+  this.na <- is.na(air2[,i])
+  cat(colnames(air2)[i], "\t", sum(this.na),"\n")
+}
+
+#apply문 이용
+col_na <- function(y){
+  return(sum(is.na(y)))
+}
+
+na_count <- apply(air2, 2, FUN = col_na)
+na_count
+
+#데이터프레임의 행별 결측값 확인
+rowSums(is.na(air2))
+sum(rowSums(is.na(air2))>0)
+sum(is.na(air2))
+
+#examcsv파일 가져와 exam데이터로 지정
+examcsv <-
+  read.csv("d:/SY/R/ds/ch4/data/examcsv.csv")
+examcsv
+mean(examcsv$math)
+options(digits = 2)
+examcsv$math <- ifelse(is.na(examcsv$math),
+                       mean(examcsv$math, na.rm=T),
+                       examcsv$math)
+examcsv
+table(is.na(examcsv$math))
+
+#이상치 데이터 작성
+name <-c("환자1", "환자2", "환자3", "환자4", "환자5")
+age <-c(22, 20, 25, 30, 27)
+gender <-c("M", "F", "M", "K", "F")
+blood_type <-c("A", "O", "B", "AB", "C")
+
+patients <-
+  data.frame(name, age, gender, blood_type)
+
+patients
+
+#성별에서 이상값 제거
+patients_outrm <-
+  patients[patients$gender == "M" | patients$gender == "F", ]
+patients_outrm
+
+#이상값이 포함된 환자 데이터 작성
+name <-c("환자1", "환자2", "환자3", "환자4", "환자5")
+age <-c(22, 20, 25, 30, 27)
+gender <-c(1, 2, 1, 3, 2)
+blood_type <-c(1, 3, 2, 4, 5)
+
+patients
+#성별에 있는 이상값 결측값으로 변경
+patients$gender <-
+  ifelse((patients$gender<1 | patients$gender>2),
+         NA, patients$gender)
+
+#혈액형에 있는 이상값 결측값으로 변경
+patients$blood_type <-
+  ifelse((patients$blood_type<1 | patients$gender>2),
+         NA, patients$blood_type)
+
+
+#결측값을 모두 제거하기
+patients[!is.na(patients$gender)&
+           !is.na(patients$blood_type),]
+
+#데이터 정제
+summary(airquality[, c(1:4)])
+
+#Ozone의 boxplot 통계값 계산으로 이상치 확인
+boxplot(airquality[,1])$stats
+
+#임시 저장 변수 air에 ariquality 데이터 복사하여 ozone의 결측값 개수 확인하기
+air <- airquality
+table(is.na(air$Ozone))
+
+#이상값을 결측값로 변경하고 결측값 개수 확인하기
+ari$Ozone <-
+  ifelse(air$Ozone < 1 | air$Ozone > 122, Na, air$Ozone)
+table(is.na(air$Ozone))
+
+#결측값을 제거하고 ozonoe의 평균 확인하기
+air_narm3 <- air[!is.na(air$Ozone),]
+mean(air_narm3$Ozone)
+
+o_mpg <- read.csv("d:/SY/R/ds/ch4/data/o_mpg.csv",
+                  stringsAsFactors = F)
+attach(o_mpg)
+
+#고속도로 연비에서 상,하단 경계치 값을 벗어난 값은 결측값으로 처리함
+table(is.na(hwy))
+hwy <- ifelse(hwy < 12 | hwy > 37, NA, hwy)
+table(is.na(hwy))

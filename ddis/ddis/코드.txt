@@ -1,0 +1,154 @@
+sopia.var.songReq = [];
+
+sopia.on('message', (e) => {
+    if ( e.isCmd || isCmd(e) ) {
+        const cmd = e.message.trim();
+        if ( e.cmd === "list" ) {
+            if ( cmd === "list" ) {
+                if ( sopia.var.songReq.length === 0 ) {
+                    sopia.send("현재 신청곡이 없습니다.");
+                } else {
+                    let rtn = "";
+                    sopia.var.songReq.forEach((s, idx) => {
+                        rtn += `${parseInt(idx,10)+1}. ${s}`;
+                        if ( idx < sopia.var.songReq.length - 1 ) {
+                            rtn += '\n';
+                        }
+                    });
+                    sopia.debug(rtn);
+                    sopia.send(rtn);
+                }
+            }
+        }
+            {
+                if ( e.cmd === "현재곡"){
+                    if( cmd === "현재곡"){
+                    if( cmd === "현재곡"){
+                        if( sopia.var.songReq.length === 0){
+                            sopia.send("현재곡은 잘 모르겠습니다.");
+                        }else
+                        {
+                    const now = sopia.var.songReq[0];
+                    sopia.send(`현재곡은 ${now}입니다.`);
+                        }
+                    }
+                }
+            }
+        }``
+        if ( e.cmd === "신청곡" ) {
+            if ( cmd === "신청곡" ) {
+                if ( cmd === "신청곡" ) {
+                if ( sopia.var.songReq.length === 0 ) {
+                    sopia.send("현재 신청곡이 없습니다.");
+                } else {
+                    let rtn = "";
+                    sopia.var.songReq.forEach((s, idx) => {
+                        rtn += `${parseInt(idx,10)+1}. ${s}`;
+                        if ( idx < sopia.var.songReq.length - 1 ) {
+                            rtn += '\n';
+                        }
+                    });
+                    sopia.debug(rtn);
+                    sopia.send(rtn);
+                    }
+                }
+            } else {
+                if ( !isAdmin(e.author) ) return;
+                const song = cmd.replace("신청곡 ", "");
+                if ( song.match(/^(제거|삭제)/) ) {
+                    if ( song.match(/^(제거|삭제)\ +[0-9]+/) ) {
+                        const num = parseInt(song.match(/[0-9]+/)[0], 10);
+                        const deleted = sopia.var.songReq.splice(num-1, 1);
+                    } else {
+                        const deleted = sopia.var.songReq.shift();
+                    }
+                } else if(song.match(/^(우선예약)/) ) {
+                        const song2 = song.replace("우선예약 ","");
+                        sopia.var.songReq.unshift(song2);
+                } else if(song.match(/^(전체삭제)/) ) {
+                        sopia.var.songReq.splice(0, sopia.var.songReq.length);
+                } else if(song.match(/^(라삭)/) ) {
+                     const deleted = sopia.var.songReq.pop();
+                }
+                else {
+                    sopia.var.songReq.push(song);
+                }
+            }
+        }
+    }
+});
+
+// songrequest
+
+
+
+//variable initi
+sopia.var.created = null;                   //방송 만들어진 시간
+sopia.var.global_stack = [];				//신청곡
+sopia.var.global_hello_stack = {};			//한 번 인사한 사람.
+sopia.var._send_ = sopia.send;					//send함수 백업
+
+String.prototype.replaceAt=function(index, replacement) {
+	return this.substr(0, index) + replacement+ this.substr(index + replacement.length);
+};
+
+String.prototype.sprintf = function() {
+	let format = this;
+	
+	for (let i = 0;i < arguments.length;i++) {
+		let element = arguments[i];
+		format = format.replace(`{${i}}`, element);
+	};
+	return format;
+};
+
+//초 단위
+window.s2hms = (s) => {
+	let h = (parseInt(s/3600)).toString();
+	let m = (parseInt((s - (h*3600)) / 60)).toString();
+	let sc = (parseInt((s - (h*3600) - (m*60)))).toString();
+	
+	if ( h.length < 2 ) {
+		h = '0' + h;
+	}
+	if ( m.length < 2 ) {
+		m = '0' + m;
+	}
+	if ( sc.length < 2 ) {
+		sc = '0' + sc;
+	}
+	
+	return {
+		h: h,
+		m: m,
+		s: sc
+	};
+};
+
+window.makePlaybar = (current, max) => {
+    current=current+3600;
+	const playbar = 
+	'{0} {1} {2}\n'+
+    '                    남은시간 : {3}\n'+
+    '     ㅤㅤㅤ  ㅤ ◁ㅤㅤ❚❚ㅤㅤ▷ㅤㅤㅤㅤㅤ↻ ⇆';
+	const bar = '────────────';
+	const parseCurrent = s2hms(current);
+	const parseMax = s2hms(max);
+   	const parseremain  = s2hms(max-current);
+
+	const per = parseInt(current / max * 100);
+	const idx = parseInt(bar.length * per / 100);
+	
+	return playbar.sprintf(`${parseCurrent.h}:${parseCurrent.m}:${parseCurrent.s}`,
+	bar.replaceAt(idx, '●'),
+	`${parseMax.h}:${parseMax.m}:${parseMax.s}`,`${parseremain.h}:${parseremain.m}:${parseremain.s}`);
+};
+
+window.updateProps = () => {
+	document.querySelector('#webview').executeJavaScript('getProps()')
+	.then(d => {
+		sopia.var.props = d;
+	});
+}; 
+
+//업타임

@@ -1,0 +1,35 @@
+{
+	"sopia": {
+		"autostart": true,
+		"onlymanager": false,
+		"limitoff": true,
+		"default-url": "https://spooncast.net"
+	},
+	"autologin": {
+		"enable": true,
+		"id": "",
+		"passwd": "",
+		"type": "facebook"
+	},
+	"api-url": "https://sopia-bot.firebaseio.com",
+	"license": {
+		"id": "m2r5vp",
+		"key": "IXCB-SDFI-AQWT-1417"
+	},
+	"spoor": {
+		"enable": false,
+		"type": "random",
+		"minspoon": "1",
+		"effectvolume": "50",
+		"ttsvolume": "100",
+		"toutspoor": "30",
+		"signature": {}
+	},
+	"bundle": {
+		"song-request": "sopia/bundles/song-request.js",
+		"spoon-sum": "sopia/bundles/spoon-sum.js",
+		"loop": "sopia/bundles/loop.js",
+		"custom-onoff": "sopia/bundles/custom-onoff.js"
+	},
+	"version": "1.3.1"
+}
