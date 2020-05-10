@@ -10,7 +10,7 @@ View(NHIS2016)
 
 #---------------------------------------------------------
 
-#NHIS2016M 지정
+#NHIS2016M 생성
 
 
 NHIS2016M <- NHIS2016[1:26]
@@ -80,7 +80,6 @@ legend("topleft", legend = levels(gdpPercap$continent),
 
 
 #1957년 gdpPercap과 lifeExp의 대륙별 평균을 데이터로 추출한 후, 해당 데이터를 사용하여 가로축에는 continent, 세로축에는 gdpPercap 평균값을 나타낸 그래프로 시각화하기
-
 #plot( ) 사용
 
 lifeExp <- gapminder %>%
@@ -88,6 +87,4 @@ lifeExp <- gapminder %>%
   group_by(year, continent) %>%
   summarise(m_lifeExp=mean(lifeExp),
             m_gdpPercap=mean(gdpPercap))
-head(lifeExp, 10)
-
-plot(lifeExp$continent, lifeExp$m_gdpPercap)
+head(lifeExp, 20)
